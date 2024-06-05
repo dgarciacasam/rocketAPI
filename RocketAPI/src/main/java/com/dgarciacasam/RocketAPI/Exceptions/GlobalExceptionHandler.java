@@ -81,7 +81,6 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleGenericException(Exception exception) {
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
         errorDetail.setProperty("description", "Unknown internal server error.");
-        // TODO send this stack trace to an observability tool
         exception.printStackTrace();
         return errorDetail;
     }
