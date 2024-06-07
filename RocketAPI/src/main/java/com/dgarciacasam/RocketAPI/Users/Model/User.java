@@ -27,19 +27,19 @@ public class User implements UserDetails {
     @Valid
 
     @Id
+    @Getter
+    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private Integer id;
 
     @NotBlank(message = "El nombre es obligatorio")
-    @NotNull(message = "El nombre es obligatorio")
     @Getter
     @Setter
     @Column(name="name")
     private String name;
 
     @NotBlank(message = "La contraseña es obligatoria")
-    @NotNull(message = "La contraseña es obligatoria")
     @Getter
     @Setter
     @Column(name="password")

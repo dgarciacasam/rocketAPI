@@ -1,6 +1,11 @@
 package com.dgarciacasam.RocketAPI.Users;
 
+import com.dgarciacasam.RocketAPI.Services.AuthenticationService;
+import com.dgarciacasam.RocketAPI.Services.JwtService;
+import com.dgarciacasam.RocketAPI.Services.Models.LoginUserDto;
 import com.dgarciacasam.RocketAPI.Users.Model.User;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,13 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private JwtService jwtService;
+
     @GetMapping
     public ResponseEntity<List<User>> getUsers(){
         return ResponseEntity.ok(userRepository.findAll());
@@ -72,47 +84,45 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity updateUser(@PathVariable Integer id, @RequestBody User user){
+    public ResponseEntity updateUser(@PathVariable Integer id, @RequestBody User user, HttpServletResponse httpServletResponse) {
         try {
             // Establecer el ID proporcionado en el objeto user
             user.setId(id);
 
             // Obtener el usuario existente de la base de datos
             Optional<User> existingUserOptional = userRepository.findById(id);
-
             // Verificar si el usuario existe
-            if(existingUserOptional.isPresent()){
+            if (existingUserOptional.isPresent()) {
                 User existingUser = existingUserOptional.get();
 
-                // Verificar y actualizar el campo email si es proporcionado
-                if(user.getEmail() != null && !user.getEmail().equals(existingUser.getEmail())){
-                    existingUser.setEmail(user.getEmail());
-                }
-
                 // Verificar y actualizar el campo nombre si es proporcionado
-                if(user.getName() != null && !user.getName().equals(existingUser.getName())){
+                if (user.getName() != null && !user.getName().equals(existingUser.getName())) {
                     existingUser.setName(user.getName());
                 }
-
-                // Verificar y actualizar el campo contraseña si es proporcionado
-                if(user.getPassword() != null && !user.getPassword().equals(existingUser.getPassword())){
-                    existingUser.setPassword(user.getPassword());
-                }
-
                 // Guardar los cambios en la base de datos
+
                 userRepository.save(existingUser);
+
+                LoginUserDto loginUserDto = new LoginUserDto(existingUser.getName(), user.getPassword());
+
+                User authenticatedUser = authenticationService.authenticate(loginUserDto);
+                String jwtToken = jwtService.generateToken(authenticatedUser);
+                //Creamos una cookie para settearle como httpOnly en el navegador
+                Cookie cookie = new Cookie("jwt", jwtToken);
+                cookie.setHttpOnly(true);
+                cookie.setMaxAge(jwtService.getExpirationTime()/ 1000);
+                cookie.setPath("/");
+                httpServletResponse.addCookie(cookie);
+
+
+                return ResponseEntity.ok(existingUser);
             }
 
             return ResponseEntity.ok().build();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             // Manejar cualquier excepción
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-    @DeleteMapping("{id}")
-    public ResponseEntity deleteUser(@PathVariable Integer id){
-        userRepository.deleteById(id);
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/getProfilePic/{id}")
@@ -134,16 +144,6 @@ public class UserController {
         Files.write(path, imageBytes);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/me")
-    public ResponseEntity<User> authenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        User currentUser = (User) authentication.getPrincipal();
-
-        return ResponseEntity.ok(currentUser);
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String>  handleValidationException(MethodArgumentNotValidException ex){
