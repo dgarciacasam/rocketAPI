@@ -15,8 +15,8 @@ public class GlobalCorsConfiguration {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        /*"http://localhost:5173"*/
-        corsConfig.setAllowedOrigins(Collections.singletonList("*"));
+        //corsConfig.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+        corsConfig.addAllowedOriginPattern("*");
         corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowCredentials(true);

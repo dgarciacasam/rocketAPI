@@ -90,7 +90,6 @@ public class AuthenticationController {
 
     @GetMapping("/me")
     public ResponseEntity<User> authenticatedUser(HttpServletRequest httpServletRequest) throws IOException {
-        System.out.println("Authentication called");
         Cookie cookie = WebUtils.getCookie(httpServletRequest, "jwt");
         if (cookie != null){
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

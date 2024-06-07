@@ -48,6 +48,9 @@ public class ProjectController {
                     user.setProfilePic(Utils.getProfileImages(user.getId()));
                 }
             }
+            for(User user: project.getUsers()){
+                user.setProfilePic(Utils.getProfileImages(user.getId()));
+            }
         }
         return ResponseEntity.ok(projectList);
     }
