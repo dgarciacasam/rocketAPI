@@ -87,7 +87,7 @@ public class AuthenticationController {
         cookie.setPath("/");
         cookie.setSecure(true);
         httpServletResponse.addHeader("Set-Cookie", String.format("%s=%s; Path=/; Secure; HttpOnly; SameSite=None", "jwt", jwtToken));
-        httpServletResponse.addCookie(cookie);
+        //httpServletResponse.addCookie(cookie);
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
     }
