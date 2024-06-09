@@ -16,23 +16,10 @@ import java.util.stream.Stream;
 
 @UtilityClass
 public class Utils {
-    public String getProfileImages(Integer userId) throws IOException, URISyntaxException {
-        Path profilePath = Paths.get(Utils.class.getClassLoader().getResource("static/images/profile").toURI());
-
-        try (Stream<Path> paths = Files.walk(profilePath)) {
-            paths.forEach(path -> {
-                System.out.println(path);
-                if (Files.isRegularFile(path)) {
-                    System.out.println("Es archivo");
-                } else if (Files.isDirectory(path)) {
-                    System.out.println("Es directorio");
-                }
-            });
-        }
-
+    public String getProfileImages(Integer userId) throws IOException {
         Path imagePath = Paths.get("RocketAPI", "src", "main", "resources", "static", "images", "profile", userId + ".jpg");
         if (!Files.exists(imagePath)) {
-            imagePath = Paths.get("RocketAPI", "src", "main", "resources", "static", "images", "profile", "0.jpg");
+            imagePath = Paths.get("RocketAPI", "src", "main", "resources", "0.jpg");
         }
         byte[] imageBytes = Files.readAllBytes(imagePath);
         String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
