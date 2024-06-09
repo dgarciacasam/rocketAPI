@@ -41,8 +41,12 @@ public class UserController {
     private JwtService jwtService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getUsers(){
-        return ResponseEntity.ok(userRepository.findAll());
+    public ResponseEntity<List<User>> getUsers() throws IOException {
+        List<User> userList = userRepository.findAll();
+        for(User user: userList){
+            user.setProfilePic(Utils.getProfileImages(user.getId()));
+        }
+        return ResponseEntity.ok(userList);
     }
 
     @GetMapping("/{id}")
