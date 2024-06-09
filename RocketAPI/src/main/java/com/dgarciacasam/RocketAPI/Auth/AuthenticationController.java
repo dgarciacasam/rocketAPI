@@ -62,7 +62,7 @@ public class AuthenticationController {
             cookie.setMaxAge(jwtService.getExpirationTime()/ 1000);
             cookie.setPath("/");
             cookie.setSecure(true);
-
+            httpServletResponse.addHeader("Set-Cookie", String.format("%s=%s; Path=/; Secure; HttpOnly; SameSite=None", "jwt", jwtToken));
             httpServletResponse.addCookie(cookie);
 
             //Añadimos al usuario a la tabla de proyectos
@@ -86,6 +86,7 @@ public class AuthenticationController {
         cookie.setMaxAge(jwtService.getExpirationTime()/ 1000);
         cookie.setPath("/");
         cookie.setSecure(true);
+        httpServletResponse.addHeader("Set-Cookie", String.format("%s=%s; Path=/; Secure; HttpOnly; SameSite=None", "jwt", jwtToken));
         httpServletResponse.addCookie(cookie);
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
