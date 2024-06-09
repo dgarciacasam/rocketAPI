@@ -117,7 +117,7 @@ public class UserController {
                 cookie.setHttpOnly(true);
                 cookie.setMaxAge(jwtService.getExpirationTime()/ 1000);
                 cookie.setPath("/");
-                httpServletResponse.addCookie(cookie);
+                httpServletResponse.addHeader("Set-Cookie", String.format("%s=%s; Path=/; Secure; HttpOnly; SameSite=None", "jwt", jwtToken));
 
 
                 return ResponseEntity.ok(existingUser);

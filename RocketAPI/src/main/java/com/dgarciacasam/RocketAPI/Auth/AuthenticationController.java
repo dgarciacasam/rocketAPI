@@ -64,7 +64,6 @@ public class AuthenticationController {
             cookie.setPath("/");
             cookie.setSecure(true);
             httpServletResponse.addHeader("Set-Cookie", String.format("%s=%s; Path=/; Secure; HttpOnly; SameSite=None", "jwt", jwtToken));
-            //httpServletResponse.addCookie(cookie);
 
             //Añadimos al usuario a la tabla de proyectos
             UserProject userProject = new UserProject(new UserProjectId(user.getId(), 0));
@@ -88,13 +87,12 @@ public class AuthenticationController {
         cookie.setPath("/");
         cookie.setSecure(true);
         httpServletResponse.addHeader("Set-Cookie", String.format("%s=%s; Path=/; Secure; HttpOnly; SameSite=None", "jwt", jwtToken));
-        //httpServletResponse.addCookie(cookie);
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> authenticatedUser(HttpServletRequest httpServletRequest) throws IOException, URISyntaxException {
+    public ResponseEntity<User> authenticatedUser(HttpServletRequest httpServletRequest) throws IOException {
         Cookie cookie = WebUtils.getCookie(httpServletRequest, "jwt");
         if (cookie != null){
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
