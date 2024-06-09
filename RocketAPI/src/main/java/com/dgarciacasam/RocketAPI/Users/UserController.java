@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dgarciacasam.RocketAPI.Utils;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,7 +42,7 @@ public class UserController {
     private JwtService jwtService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getUsers() throws IOException {
+    public ResponseEntity<List<User>> getUsers() throws IOException, URISyntaxException {
         List<User> userList = userRepository.findAll();
         for(User user: userList){
             user.setProfilePic(Utils.getProfileImages(user.getId()));
@@ -50,7 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String,Object>> getUser(@PathVariable Integer id) throws  IOException{
+    public ResponseEntity<Map<String,Object>> getUser(@PathVariable Integer id) throws IOException, URISyntaxException {
         Optional<User> usuario = userRepository.findById(id);
         Map<String, Object> respuesta = new HashMap<>();
         if(usuario.isPresent()){

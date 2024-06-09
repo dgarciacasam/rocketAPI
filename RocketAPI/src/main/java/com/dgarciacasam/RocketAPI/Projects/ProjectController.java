@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,7 @@ public class ProjectController {
     TaskUserRepository taskUserRepository;
 
     @GetMapping("/getProjecstByUser/{id}")
-    public ResponseEntity getProjecstByUser(@PathVariable  Integer id) throws IOException {
+    public ResponseEntity getProjecstByUser(@PathVariable  Integer id) throws IOException, URISyntaxException {
         List<ProjectModel> projectList = projectRepository.getProjectsByUser(id);
         for(ProjectModel project: projectList){
             for(Task task: project.getTasks()){

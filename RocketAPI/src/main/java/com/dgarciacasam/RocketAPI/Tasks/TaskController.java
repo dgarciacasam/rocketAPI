@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public class TaskController{
 
 
     @GetMapping
-    public ResponseEntity<List<Task>> getTasks() throws IOException {
+    public ResponseEntity<List<Task>> getTasks() throws IOException, URISyntaxException {
         List<Task> taskList = taskRepository.findAll();
         for(Task task: taskList){
             for(User user: task.getUsers()){

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,7 +94,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> authenticatedUser(HttpServletRequest httpServletRequest) throws IOException {
+    public ResponseEntity<User> authenticatedUser(HttpServletRequest httpServletRequest) throws IOException, URISyntaxException {
         Cookie cookie = WebUtils.getCookie(httpServletRequest, "jwt");
         if (cookie != null){
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
