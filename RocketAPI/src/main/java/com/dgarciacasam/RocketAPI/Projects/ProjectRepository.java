@@ -15,4 +15,7 @@ public interface ProjectRepository extends JpaRepository<ProjectModel, Integer> 
             "JOIN UsersProjects up ON p.id = up.projectId\n" +
             "WHERE up.userId = :id", nativeQuery = true)
     public List<ProjectModel> getProjectsByUser(@Param("id") Integer id);
+
+    @Query(value = "SELECT p.name FROM Projects p WHERE p.id = :projectId", nativeQuery = true)
+    public String getProjectNameById(@Param("projectId") Integer projectId);
 }

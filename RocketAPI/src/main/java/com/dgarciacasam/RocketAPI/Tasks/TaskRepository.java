@@ -14,5 +14,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     @Query(value = "SELECT t.* FROM Tasks t JOIN TasksUsers tu ON t.id = tu.taskId WHERE tu.userId = :userId AND t.projectId = :projectId", nativeQuery = true)
     public List<Task> getTasksByProject(@Param("userId") Integer userId, @Param("projectId") Integer projectId);
 
+    @Query(value = "SELECT t.* FROM Tasks t JOIN TasksUsers tu ON t.id = tu.taskId WHERE DATE(t.finishDate) = CURDATE() + INTERVAL 1 DAY AND t.columnId != 3", nativeQuery = true)
+    public List<Task> getFinalishingTasks();
 }
 

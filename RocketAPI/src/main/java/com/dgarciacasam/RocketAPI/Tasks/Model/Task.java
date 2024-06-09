@@ -32,7 +32,7 @@ public class Task {
     @Column(name="projectId")
     private Integer projectId;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "TasksUsers",
             joinColumns = @JoinColumn(name = "taskId"),
