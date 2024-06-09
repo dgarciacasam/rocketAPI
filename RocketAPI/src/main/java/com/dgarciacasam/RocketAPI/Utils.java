@@ -17,9 +17,9 @@ import java.util.stream.Stream;
 @UtilityClass
 public class Utils {
     public String getProfileImages(Integer userId) throws IOException {
-        Path imagePath = Paths.get("RocketAPI", "src", "main", "resources", "static", "images", "profile", userId + ".jpg");
+        Path imagePath = Paths.get("src", "main", "resources", "static", "images", "profile", userId + ".jpg");
         if (!Files.exists(imagePath)) {
-            imagePath = Paths.get("RocketAPI", "src", "main", "resources", "0.jpg");
+            imagePath = Paths.get( "src", "main", "resources", "0.jpg");
         }
         byte[] imageBytes = Files.readAllBytes(imagePath);
         String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
