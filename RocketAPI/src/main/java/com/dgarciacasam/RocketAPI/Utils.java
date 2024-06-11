@@ -25,7 +25,7 @@ public class Utils {
 
         if (!imageFile.exists()) {
             // Si no existe, cambiar el imagePath
-            imagePath = "static/images/profile/" + userId + ".jpg";
+            imagePath = "static/images/profile/0.jpg";
             ClassPathResource imageResource = new ClassPathResource(imagePath);
             return Base64.getEncoder().encodeToString(StreamUtils.copyToByteArray(imageResource.getInputStream()));
         }
