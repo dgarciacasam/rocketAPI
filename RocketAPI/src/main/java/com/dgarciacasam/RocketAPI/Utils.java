@@ -17,9 +17,8 @@ import java.util.Base64;
 @UtilityClass
 public class Utils {
     public String getProfileImages(Integer userId) throws IOException {
-        String imagePath = "static/images/profile/" + userId + ".jpg";
+        String imagePath = "./profile-pics/" + userId + ".jpg";
         ClassPathResource imageResource = new ClassPathResource(imagePath);
-
         // Si no existe la imagen, usa la imagen por defecto
         if (!imageResource.exists()) {
             imagePath = "static/images/profile/0.jpg";

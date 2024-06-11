@@ -6,6 +6,7 @@ import com.dgarciacasam.RocketAPI.Services.Models.LoginUserDto;
 import com.dgarciacasam.RocketAPI.Users.Model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.dgarciacasam.RocketAPI.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -143,29 +146,35 @@ public class UserController {
 
     @PostMapping("/setProfilePic/{id}")
     public ResponseEntity setProfilePic(@PathVariable String id, @RequestParam("image") MultipartFile file) throws IOException {
-        final String PROFILE_PIC_DIRECTORY = "static/images/profile";
-        byte[] imageBytes = file.getBytes();
+        String folderPath = "./profile-pics/"; // Ruta relativa desde la raíz del proyecto
 
-        // Comprobar que el archivo sea jpg o png
-        String contentType = file.getContentType();
-        if (!("image/jpeg".equals(contentType) || "image/png".equals(contentType))) {
-            return ResponseEntity.badRequest().body("Only JPG and PNG images are allowed");
+        // Verificamos si la carpeta existe, si no, la creamos
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            folder.mkdirs(); // Crear directorio y subdirectorios si no existen
         }
 
-        // Crear el directorio si no existe
-        Path directoryPath = Paths.get(PROFILE_PIC_DIRECTORY);
-        if (!Files.exists(directoryPath)) {
-            Files.createDirectories(directoryPath);
+        // Obtenemos el nombre del archivo original
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        // Le damos un nombre único al archivo, para evitar posibles conflictos
+        String uniqueFileName = id + ".jpg";
+
+        try {
+            // Verificamos que el nombre de archivo no contenga caracteres no permitidos
+            if (fileName.contains("..")) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            // Ruta completa del archivo a guardar
+            Path targetLocation = Paths.get(folderPath + uniqueFileName);
+            // Guardamos el archivo en el directorio
+            Files.copy(file.getInputStream(), targetLocation, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+            return ResponseEntity.ok().build();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.badRequest().build();
         }
-
-        // Formar la ruta completa del archivo
-        String imagePath = PROFILE_PIC_DIRECTORY + "/" + id + ".jpg";
-        Path path = Paths.get(imagePath);
-
-        // Guardar la imagen en el sistema de archivos
-        Files.write(path, imageBytes);
-
-        return ResponseEntity.ok().build();
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
