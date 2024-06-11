@@ -146,7 +146,7 @@ public class UserController {
 
     @PostMapping("/setProfilePic/{id}")
     public ResponseEntity setProfilePic(@PathVariable String id, @RequestParam("image") MultipartFile file) throws IOException {
-        String folderPath = "./profile-pics/"; // Ruta relativa desde la raíz del proyecto
+        String folderPath = "./RocketAPI/profile-pics/"; // Ruta relativa desde la raíz del proyecto
 
         // Verificamos si la carpeta existe, si no, la creamos
         File folder = new File(folderPath);
