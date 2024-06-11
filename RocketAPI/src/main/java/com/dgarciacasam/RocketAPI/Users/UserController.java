@@ -143,10 +143,25 @@ public class UserController {
 
     @PostMapping("/setProfilePic/{id}")
     public ResponseEntity setProfilePic(@PathVariable String id, @RequestParam("image") MultipartFile file) throws IOException {
+        final String PROFILE_PIC_DIRECTORY = "profile-pics";
         byte[] imageBytes = file.getBytes();
-        //Hay que comprobar que el archivo sea jpg o png.
-        Path path = Paths.get("RocketAPI","src","main","resources","static","images","profile", id + ".jpg");
+
+        // Comprobar que el archivo sea jpg o png
+        String contentType = file.getContentType();
+        if (!("image/jpeg".equals(contentType) || "image/png".equals(contentType))) {
+            return ResponseEntity.badRequest().body("Only JPG and PNG images are allowed");
+        }
+
+        // Crear el directorio si no existe
+        Path directoryPath = Paths.get(PROFILE_PIC_DIRECTORY);
+        if (!Files.exists(directoryPath)) {
+            Files.createDirectories(directoryPath);
+        }
+
+        // Guardar la imagen en el sistema de archivos
+        Path path = directoryPath.resolve(id + ".jpg");
         Files.write(path, imageBytes);
+
         return ResponseEntity.ok().build();
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
