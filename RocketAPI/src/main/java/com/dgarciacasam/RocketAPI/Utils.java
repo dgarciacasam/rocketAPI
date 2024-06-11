@@ -17,17 +17,23 @@ import java.util.Base64;
 @UtilityClass
 public class Utils {
     public String getProfileImages(Integer userId) throws IOException {
-        //Este código funciona en local
-        Path imagePath = Paths.get("static", "images", "profile", userId + ".jpg");
-        if (!Files.exists(imagePath)) {
-            imagePath = Paths.get("static", "images", "profile", "0.jpg");
+        // Path dentro del classpath
+        String imagePath = "static/images/profile/" + userId + ".jpg";
+        ClassPathResource imageResource = new ClassPathResource(imagePath);
+
+        // Si no existe la imagen, usa la imagen por defecto
+        if (!imageResource.exists()) {
+            imagePath = "static/images/profile/0.jpg";
+            imageResource = new ClassPathResource(imagePath);
         }
-        byte[] imageBytes = Files.readAllBytes(imagePath);
+
+        // Leer los bytes de la imagen
+        byte[] imageBytes = StreamUtils.copyToByteArray(imageResource.getInputStream());
+
+        // Convertir los bytes a Base64
         String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
 
         return imageBase64;
-
-
     }
 
 }
