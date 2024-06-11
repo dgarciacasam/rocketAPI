@@ -13,22 +13,13 @@ import com.dgarciacasam.RocketAPI.Utils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
-import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +42,6 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity register(@RequestBody RegisterUserDto registerUserDto, HttpServletResponse httpServletResponse) {
         User user = authenticationService.signup(registerUserDto);
-        System.out.println(user.getId());
         if(user != null){
             LoginUserDto registeredUser = new LoginUserDto(user.getUsername(), registerUserDto.getPassword());
             User authenticatedUser = authenticationService.authenticate(registeredUser);
@@ -112,7 +102,8 @@ public class AuthenticationController {
         jwtCookie.setHttpOnly(true);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(0);
-        response.addCookie(jwtCookie);
+        jwtCookie.setSecure(true);
+        response.addHeader("Set-Cookie", String.format("%s=%s; Path=/; Secure; HttpOnly; SameSite=None", "jwt", ""));
         Map<String, Boolean> responseBody = new HashMap<>();
         responseBody.put("ok", true);
         return ResponseEntity.ok(responseBody);
