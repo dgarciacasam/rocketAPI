@@ -143,7 +143,7 @@ public class UserController {
 
     @PostMapping("/setProfilePic/{id}")
     public ResponseEntity setProfilePic(@PathVariable String id, @RequestParam("image") MultipartFile file) throws IOException {
-        final String PROFILE_PIC_DIRECTORY = "profile-pics";
+        final String PROFILE_PIC_DIRECTORY = "static/images/profile";
         byte[] imageBytes = file.getBytes();
 
         // Comprobar que el archivo sea jpg o png
@@ -158,8 +158,11 @@ public class UserController {
             Files.createDirectories(directoryPath);
         }
 
+        // Formar la ruta completa del archivo
+        String imagePath = PROFILE_PIC_DIRECTORY + "/" + id + ".jpg";
+        Path path = Paths.get(imagePath);
+
         // Guardar la imagen en el sistema de archivos
-        Path path = directoryPath.resolve(id + ".jpg");
         Files.write(path, imageBytes);
 
         return ResponseEntity.ok().build();
